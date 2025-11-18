@@ -23,4 +23,20 @@ pipeline {
             }
         }
     }
+
+    // Post-build actions
+    post {
+        always {
+            echo 'Post build condition running'
+        }
+        success {
+            echo 'This runs only if the build succeeded'
+        }
+        failure {
+            echo 'Post action if build failed'
+        }
+        unstable {
+            echo 'This runs if the build is unstable'
+        }
+    }
 }
