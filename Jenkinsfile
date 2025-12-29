@@ -1,49 +1,24 @@
 pipeline {
     agent any
-
-    environment {
-        APP_VERSION = "1.0"
-    }
-
-    tools {
-        maven 'Maven3' // Ensure Maven3 is configured in Jenkins → Manage Jenkins → Tools
-    }
-
-    parameters {
-        booleanParam(name: 'executeTests', defaultValue: true)
-    }
-
+    
     stages {
         stage('Build') {
             steps {
-                echo "Building App version ${APP_VERSION}..."
-                sh 'mvn clean compile'
+                echo 'Building..'
+                // Here you can define commands for your build
             }
         }
-
         stage('Test') {
-            when {
-                expression { params.executeTests }
-            }
             steps {
-                echo 'Running Tests...'
-                sh 'mvn test'
+                echo 'Testing..'
+                // Here you can define commands for your tests
             }
         }
-
         stage('Deploy') {
             steps {
-                echo 'Deploying App...'
+                echo 'Deploying....'
+                // Here you can define commands for your deployment
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build completed successfully!'
-        }
-        failure {
-            echo 'Build failed!'
         }
     }
 }
