@@ -17,7 +17,7 @@ pipeline {
                 // using environment variable
                 // To output the value of variable in string use " "
                 echo "Building version ${NEW_VERSION}"
-                sh "nvm install"
+                bat "nvm install"
             }
         }
         
