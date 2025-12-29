@@ -1,56 +1,57 @@
 pipeline {
     agent any
-    
-    tools {
-        maven 'Maven'  // This is working!
-    }
-    
+
+    // Define environment variables (available in all stages)
     environment {
-        NEW_VERSION = '1.3.0'
+        APP_VERSION = "1.0.5"
+        DEPLOY_ENV = "production"
     }
-    
+
+    // Define build tools (Maven in this case)
+    tools {
+        maven "Maven"   // this name must match the Maven installation name in Jenkins
+    }
+
     stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/mightykarim/static1.git', branch: 'main'
-            }
-        }
-        
+
         stage('Build') {
             steps {
-                echo 'Building Project'
-                echo "Building version ${NEW_VERSION}"
-                
-                // Maven commands - THESE WORK!
-                sh 'mvn --version'
-                sh 'mvn clean compile'
+                echo "Building application version: ${APP_VERSION}"
+                echo "Environment: ${DEPLOY_ENV}"
+
+                // Using Maven installed via tools{}
+                sh "mvn --version"
+                sh "mvn clean install"
             }
         }
-        
+
         stage('Test') {
             steps {
                 echo 'Testing..'
-                // Optional: sh 'mvn test'
+                // test commands here...
             }
         }
-        
+
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
-                sh 'echo "Deployment complete"'
+                echo "Deploying version ${APP_VERSION} to ${DEPLOY_ENV}"
+                // deployment commands...
             }
         }
     }
-    
+
     post {
         always {
-            echo 'Pipeline completed!'
+            echo 'Post build condition running'
         }
         success {
-            echo '✅ Build succeeded!'
+            echo 'This runs only if the build succeeded'
         }
         failure {
-            echo '❌ Build failed!'
+            echo 'Post action if build failed'
+        }
+        unstable {
+            echo 'This runs if the build is unstable'
         }
     }
 }
