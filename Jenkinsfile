@@ -11,6 +11,21 @@ pipeline {
     }
     
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout code from GitHub with credentials
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    extensions: [],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/mightykarim/static1.git',
+                        credentialsId: 'github-token'  // Your GitHub credentials
+                    ]]
+                ])
+            }
+        }
+        
         stage('Build') {
             steps {
                 echo 'Building Project'
@@ -33,6 +48,12 @@ pipeline {
                 echo 'Deploying....'
                 // Here you can define commands for your deployment
             }
+        }
+    }
+    
+    post {
+        always {
+            echo 'Pipeline completed!'
         }
     }
 }
