@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     tools {
-        maven 'Maven'  // This should match the Maven tool name configured in Jenkins
+        maven 'Maven'  // Maven tool configured in Jenkins
     }
     
     environment {
@@ -13,14 +13,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub with credentials
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
                     extensions: [],
                     userRemoteConfigs: [[
                         url: 'https://github.com/mightykarim/static1.git',
-                        credentialsId: 'github-token'  // Your GitHub credentials
+                        credentialsId: 'github-token'
                     ]]
                 ])
             }
@@ -29,24 +28,34 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Project'
-                // using environment variable
-                // To output the value of variable in string use " "
                 echo "Building version ${NEW_VERSION}"
-                sh "nvm install"
+                
+                // Use Maven commands instead of nvm
+                sh 'mvn --version'  // Check Maven is installed
+                sh 'mvn clean compile'  // Example Maven build command
+                
+                // If you need Node.js for your project, install it directly:
+                sh '''
+                    # Install Node.js directly (alternative to nvm)
+                    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+                    apt-get install -y nodejs
+                    node --version
+                    npm --version
+                '''
             }
         }
         
         stage('Test') {
             steps {
                 echo 'Testing..'
-                // Here you can define commands for your tests
+                sh 'mvn test'  // Example Maven test command
             }
         }
         
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                // Here you can define commands for your deployment
+                sh 'echo "Deployment would happen here"'
             }
         }
     }
@@ -54,6 +63,12 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed!'
+        }
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
         }
     }
 }
